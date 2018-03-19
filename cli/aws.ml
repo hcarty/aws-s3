@@ -30,6 +30,7 @@ module Make(Compat: Aws_s3.Types.Compat) = struct
     | S3.Throttled -> "Throttled"
     | S3.Unknown (code, msg) -> sprintf "Unknown: %d, %s" code msg
     | S3.Not_found -> "Not_found"
+    | S3.Exn exn -> sprintf "Exn: %s" (Exn.to_string exn)
 
   type cmd =
     | S3toLocal of objekt * string

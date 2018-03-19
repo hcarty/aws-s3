@@ -310,7 +310,7 @@ module Make(C : Types.Compat) = struct
     let time = Time.now () in
     (* If PUT add content length *)
     let content_length = match meth with
-      | `PUT ->
+      | `PUT | `POST ->
         let length = Option.value_map ~f:(String.length) ~default:0 body in
         Some ("Content-Length", Int.to_string length)
       | _ -> None

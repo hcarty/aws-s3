@@ -19,6 +19,7 @@ module Make(Compat : Types.Compat) : sig
     | Throttled
     | Unknown of int * string
     | Not_found
+    | Exn of exn
 
   type nonrec 'a result = ('a, error) result Deferred.t
   type 'a command = ?credentials:Credentials.t -> ?region:Util.region -> 'a
@@ -99,6 +100,28 @@ module Make(Compat : Types.Compat) : sig
   *)
   val ls :
     (?continuation_token:string -> ?prefix:string -> bucket:string -> unit -> Ls.t) command
+
+  module Multipart_upload: sig
+    type t
+
+    val init :
+      ?credentials:Credentials.t ->
+      ?region:Util.region ->
+      ?content_type:string ->
+      ?content_encoding:string * string ->
+      ?acl:string ->
+      ?cache_control:string ->
+      bucket:string -> key:string -> (t, error) Core_kernel.result deferred
+    val upload_part :
+      t ->
+      ?credentials:Credentials.t ->
+      ?region:Util.region ->
+      part_number:int -> string -> (unit, error) Core_kernel.result deferred
+    val complete :
+      ?credentials:Credentials.t ->
+      ?region:Util.region -> t -> (string, error) Core_kernel.result deferred
+    val abort : 'a -> unit
+  end
 end
 
 module Test : sig
